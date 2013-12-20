@@ -1,4 +1,3 @@
 #!/bin/bash
 
-docker build -t=aterreno/activemq .
-docker push aterreno/activemq
+docker build -t bdecamp/activemq:5.8.0 .

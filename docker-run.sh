@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run -p=61616:61616 -p=8161:8161 -d aterreno/activemq
+docker run -d -h amq1 bdecamp/activemq:5.8.0

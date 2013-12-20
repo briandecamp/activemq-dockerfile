@@ -1,9 +1,8 @@
-activemq-dockerfile
+docker-activemq
 ===================
 
-Docker file for activemq instance [https://index.docker.io/u/aterreno/activemq/]
+Docker configuration for activemq mesh network of brokers
 
 ./docker-build.sh
 ./docker-run.sh
 
-Enjoy

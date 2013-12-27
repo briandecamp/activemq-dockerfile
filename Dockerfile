@@ -14,11 +14,20 @@ RUN apt-get -y install curl
 RUN cd /opt; curl -L http://www.carfab.com/apachesoftware/activemq/apache-activemq/5.8.0/apache-activemq-5.8.0-bin.tar.gz | tar -xzv
 RUN ln -sf /opt/apache-activemq-5.8.0 /opt/activemq
 RUN ln -sf /opt/activemq/bin/activemq /etc/init.d/
-# RUN update-rc.d activemq defaults
-# RUN /etc/init.d/activemq setup /etc/default/activemq
+RUN update-rc.d activemq defaults
+RUN /etc/init.d/activemq setup /etc/default/activemq
+
+# Use our own /etc/default/activemq to activate jmx
 ADD etc/default /etc/default
-ADD conf /opt/apache/conf
 
-EXPOSE 6255 61616 61617 1099 8080
+# Use our own activemq.xml config
+ADD conf /opt/apache-activemq-5.8.0/conf
 
-CMD service activemq start
+# some tools
+RUN apt-get -y install telnet vim
+
+EXPOSE 6155 61616 61617 1099 8161
+
+# CMD service activemq start
+# Not sure why 'service' doesn't seem to work
+CMD java -Xms1G -Xmx1G -Djava.util.logging.config.file=logging.properties -Dcom.sun.management.jmxremote -Djava.io.tmpdir=/opt/activemq/tmp -Dactivemq.classpath=/opt/activemq/conf -Dactivemq.home=/opt/activemq -Dactivemq.base=/opt/activemq -Dactivemq.conf=/opt/activemq/conf -Dactivemq.data=/opt/activemq/data -jar /opt/activemq/bin/activemq.jar start

@@ -13,7 +13,7 @@
   </bean>
   
   <broker xmlns="http://activemq.apache.org/schema/core" 
-    brokerName="amq01"
+    brokerName="broker-${HOSTNAME}"
     useJmx="true"
     advisorySupport="true"
     splitSystemUsageForProducersConsumers="true" 
@@ -40,7 +40,7 @@
 
     <networkConnectors>
       <networkConnector name="nc1" 
-        uri="discovery://(multicast://brokers)" 
+        uri="multicast://default?group=broker" 
         dynamicOnly="true"
         conduitSubscriptions="false"
         decreaseNetworkConsumerPriority="true"/>
@@ -60,30 +60,38 @@
     
     <systemUsage>
       <systemUsage sendFailIfNoSpaceAfterTimeout="300">
-        <memoryUsage>
-          <memoryUsage limit="5734 mb"/>
-        </memoryUsage>
-        <storeUsage>
-          <storeUsage limit="28670 mb"/>
-        </storeUsage>
-        <tempUsage>
-          <tempUsage limit="28670 mb"/>
-        </tempUsage>
+          <memoryUsage>
+              <memoryUsage limit="64 mb"/>
+          </memoryUsage>
+          <storeUsage>
+              <storeUsage limit="1024 mb"/>
+          </storeUsage>
+          <tempUsage>
+              <tempUsage limit="1024 mb"/>
+          </tempUsage>
       </systemUsage>
     </systemUsage>
     
     <transportConnectors>
       <!-- Client connections -->
       <transportConnector name="openwire-clients" 
-        uri="tcp://localhost:61616" 
-        discoveryUri="multicast://clients" 
-        enableStatusMonitor="true"/>
+        uri="tcp://0.0.0.0:61616" 
+        discoveryUri="multicast://default?group=client" 
+        enableStatusMonitor="true"
+        updateClusterClients="true" 
+        updateClusterClientsOnRemove="true"
+        rebalanceClusterClients="true"/>
       
       <!-- Broker connections -->
+      <!-- Using localhost:61616 for uri prevents the bridge from connecting -->
       <transportConnector name="openwire-brokers"
-        uri="tcp://localhost:61617"
-        discoveryUri="multicast://brokers" 
-        enableStatusMonitor="true"/>
+        uri="tcp://0.0.0.0:61617"
+        discoveryUri="multicast://default?group=broker" 
+        enableStatusMonitor="true"
+        updateClusterClients="true" 
+        updateClusterClientsOnRemove="true"
+        rebalanceClusterClients="true"/>
+        
     </transportConnectors>
   </broker>
   

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+PIDS=`docker ps | grep -v ID | cut -d ' ' -f 1`
+for PID in $PIDS; do docker kill $PID; done
+

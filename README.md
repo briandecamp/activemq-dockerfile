@@ -1,6 +1,8 @@
 docker-activemq
 ===================
 
+Create two activemq brokers connected with the multicast transport protocol, and test with a multicast client connection string. Also uses automatic cluster updates in ActiveMQ 5.8.
+
 Build the test app:
 ```
 mvn clean install

@@ -83,7 +83,6 @@
         rebalanceClusterClients="true"/>
       
       <!-- Broker connections -->
-      <!-- Using localhost:61616 for uri prevents the bridge from connecting -->
       <transportConnector name="openwire-brokers"
         uri="tcp://0.0.0.0:61617"
         discoveryUri="multicast://default?group=broker" 
@@ -91,7 +90,6 @@
         updateClusterClients="true" 
         updateClusterClientsOnRemove="true"
         rebalanceClusterClients="true"/>
-        
     </transportConnectors>
   </broker>
   

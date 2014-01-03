@@ -1,6 +1,6 @@
 package test;
-import org.apache.activemq.ActiveMQConnectionFactory;
- 
+import java.util.Map;
+
 import javax.jms.Connection;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -11,27 +11,29 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
  
 /**
  * Hello world!
  */
 public class App {
-    //public static final String CONNECTION_STRING = "multicast://default?group=client";
+    public static final String CONNECTION_STRING = "multicast://default?group=client";
     //public static final String CONNECTION_STRING = "discovery:(multicast://default?group=client)";
     //public static final String CONNECTION_STRING = "failover:(multicast://default?group=client)";
     //public static final String CONNECTION_STRING = "tcp://amq01:61616";
-    public static final String CONNECTION_STRING = "failover:(tcp://amq01:61616)";
-    //public static final String CONNECTION_STRING = "discovery:(tcp://amq01:61616)";
+    //public static final String CONNECTION_STRING = "failover:(tcp://mq01.texo.gorilla.dev.opal.synacor.com:61616)";
+    //public static final String CONNECTION_STRING = "discovery:(tcp://mq01.texo.gorilla.dev.opal.synacor.com:61616)";
     public static ActiveMQConnectionFactory connectionFactory;
     
     public static void main(String[] args) throws Exception {
-        System.out.print("Creating connection factory ...");
+        String url = System.getProperty("activemq.url");
+        if(url == null) url = CONNECTION_STRING;
+        System.out.println("Creating connection factory: " + url);
         connectionFactory = new ActiveMQConnectionFactory(CONNECTION_STRING);
-        System.out.println("done.");
-        thread(new HelloWorldProducer(), false);
-        thread(new HelloWorldProducer(), false);
-        thread(new HelloWorldConsumer(), false);
-        thread(new HelloWorldConsumer(), false);
+        
+        for(int i = 0; i < 10; i++) thread(new HelloWorldProducer(), false);
+        for(int i = 0; i < 100; i++) thread(new HelloWorldConsumer(), false);
     }
  
     public static void thread(Runnable runnable, boolean daemon) {
@@ -44,17 +46,13 @@ public class App {
         public void run() {
             try {
                 // Create a Connection
-                System.out.println("Creating producer connection");
                 Connection connection = connectionFactory.createConnection();
-                System.out.println("Starting producer connection");
                 connection.start();
  
                 // Create a Session
-                System.out.println("Creating producer session");
                 Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
  
                 // Create the destination (Topic or Queue)
-                System.out.println("Creating producer destination");
                 Destination destination = session.createQueue("TEST.FOO");
  
                 // Create a MessageProducer from the Session to the Topic or Queue
@@ -70,7 +68,7 @@ public class App {
                   // Tell the producer to send the message
                   System.out.println("Sending message: "+ message.hashCode() + " : " + Thread.currentThread().getName());
                   producer.send(message);
-                  Thread.sleep((int)(Math.random() * 1000));
+                  Thread.sleep((int)(Math.random() * 10000));
                 }
  
                 // Clean up

@@ -6,6 +6,15 @@ function update_host() {
   DOCKERIP=`docker inspect $DOCKERID | grep IPAddress | cut -d '"' -f 4`
   HOSTNAME=`docker inspect $DOCKERID | grep \"Hostname\" | cut -d '"' -f 4`
 
+  grep -q $HOSTNAME /etc/hosts
+  if [ $? -eq 0 ] 
+  then
+    sed "s/[0-9\.]*\s$HOSTNAME/$DOCKERIP\t$HOSTNAME/g" /etc/hosts > /tmp/hosts
+    mv /tmp/hosts /etc/hosts
+  else
+    echo "$DOCKERIP	$HOSTNAME" >> /etc/hosts
+  fi
+
   sed "s/[0-9\.]*\s$HOSTNAME/$DOCKERIP\t$HOSTNAME/g" /etc/hosts > /tmp/hosts
   mv /tmp/hosts /etc/hosts
 }

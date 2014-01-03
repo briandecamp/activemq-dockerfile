@@ -10,8 +10,12 @@ RUN apt-get -y install python-software-properties
 
 RUN apt-get install -y -q openjdk-7-jre-headless wget
 
-RUN apt-get -y install curl
+# some tools
+RUN apt-get -y install curl telnet vim inetutils-ping
+
+# download activemq
 RUN cd /opt; curl -L http://www.carfab.com/apachesoftware/activemq/apache-activemq/5.8.0/apache-activemq-5.8.0-bin.tar.gz | tar -xzv
+
 RUN ln -sf /opt/apache-activemq-5.8.0 /opt/activemq
 RUN ln -sf /opt/activemq/bin/activemq /etc/init.d/
 RUN update-rc.d activemq defaults
@@ -23,9 +27,6 @@ ADD etc/default /etc/default
 # Use our own activemq.xml config
 ADD conf /opt/apache-activemq-5.8.0/conf
 RUN chmod 600 /opt/activemq/conf/jmx.password
-
-# some tools
-RUN apt-get -y install telnet vim inetutils-ping
 
 # Add a test jar
 ADD target/docker-activemq-0.0.1-SNAPSHOT.jar /opt/

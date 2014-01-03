@@ -49,3 +49,12 @@ Run the test
 ```
 root@tester:/# java -jar /opt/docker-activemq-0.0.1-SNAPSHOT.jar
 ```
+
+Since I'm running Docker in Vagrant, I found it helpful to enable host-only networking so I could access Docker ports from my local machine. In my Vagrantfile, I have
+```
+Vagrant::Config.run do |config|
+ config.vm.network :hostonly, "192.168.101.10"
+end
+```
+
+Using docker inspect, I can get the forwarded ports and access them from the Vagrant host (i.e. My Macbook Pro)
